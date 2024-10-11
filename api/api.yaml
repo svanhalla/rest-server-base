@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: Example API
+  description: A simple API to manage items.
+  version: 1.0.0
+
+servers:
+  - url: /api
+
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        ID:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+
+paths:
+  /items:
+    get:
+      summary: Get a list of items
+      description: Retrieve a list of all items.
+      operationId: getItems
+      responses:
+        '200':
+          description: A JSON array of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+
+    post:
+      summary: Add a new item
+      description: Create a new item.
+      operationId: createItem
+      requestBody:
+        description: The item to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '201':
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+
+  /items/{id}:
+    get:
+      summary: Get a specific item
+      description: Retrieve a specific item by its ID.
+      operationId: getItemById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON object representing the item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item not found
+
+    put:
+      summary: Update an existing item
+      description: Update an item by its ID.
+      operationId: updateItemById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Updated item data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item not found
+
+    head:
+      summary: Check if an item exists
+      description: Check if an item exists by its ID.
+      operationId: headItemById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item exists
+        '404':
+          description: Item not found

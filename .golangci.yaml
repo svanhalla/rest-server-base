@@ -1,0 +1,38 @@
+# Konfiguration för golangci-lint
+run:
+  timeout: 5m  # Maximal tid för att köra lintern
+
+# Aktivera standardlinters
+linters:
+  enable:
+    - errcheck          # Kontrollera att fel returneras korrekt
+    - govet             # Standard Go vet-linter
+    - staticcheck       # Fångar ineffektiv kod och förbättringsmöjligheter
+    - gosimple          # Förenklingslinter, en del av staticcheck
+    - unused            # Fångar oanvända kodblock och paket
+    - gofmt             # Kontrollera kodformat enligt gofmt
+    - goimports         # Kontrollera korrekta importformat
+    - ineffassign       # Fångar ineffektiva tilldelningar
+    - govet             # Fångar buggar och potentiella problem
+    - typecheck         # Kontrollera typersättning
+    - misspell          # Stavningskontroll
+    - gocyclo           # Cykloamtisk komplexitetskontroll
+    - gosec             # Säkerhetskontroll
+
+# Ignorera vissa filer och mappar
+linters-settings:
+  gofmt:
+    simplify: true  # Simplifiera kod i lintern för gofmt
+
+  gosec:
+    severity: "low"  # Kontrollera säkerhetsrisker med låg svårighetsgrad
+
+  gocyclo:
+    min-complexity: 10  # Larm vid för komplex kod (>10 cyklomatisk komplexitet)
+
+issues:
+  exclude-rules:
+    - path: _test\.go  # Ignorera testfiler
+      linters:
+        - errcheck     # Ingen felkontroll i testfiler
+
