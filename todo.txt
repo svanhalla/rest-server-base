@@ -1,0 +1,4 @@
+docker build (make)
+kubernetes install (helm)
+generate cli
+generate client (make)

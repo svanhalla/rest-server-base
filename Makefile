@@ -14,6 +14,8 @@ VERSION := $(shell git describe --tags --always --dirty)
 BUILD_DATE := $(shell date +%Y-%m-%d)
 USER := $(shell whoami)
 
+DOCKERFILE := Dockerfile
+
 # Kommandon
 
 .PHONY: all build clean generate
@@ -43,11 +45,28 @@ clean:
 
 format:
 	goimports -w internal/*.go
+	goimports -w cmd/*.go
 
 zip:
 	@mkdir -p dist
 	@echo "Zipping all project files from root directory into dist/..."
 	zip -r $(ZIP_FILE) . -x "dist/*" "*.git/*" "*.DS_Store" ".idea/*"
 	@echo "Files zipped into $(ZIP_FILE)"
+
+# Docker build
+docker-build:
+	@echo "Building Docker image..."
+	docker build -t $(PROJECT_NAME) -f $(DOCKERFILE) .
+
+# Clean build artifacts
+clean-docker:
+	@echo "Cleaning up..."
+	rm -f api/models.gen.go api/server.gen.go $(PROJECT_NAME)
+
+# Lint the application
+.PHONY: lint
+lint: format
+	@golangci-lint run
+
 
 

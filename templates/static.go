@@ -1,5 +1,5 @@
 // Package static makes it possible to embed files when distributing the application
-package static
+package templates
 
 import (
 	"embed"
@@ -15,10 +15,31 @@ import (
 //go:embed *
 var Assets embed.FS
 
+// MustGetFile hämtar innehållet i en fil som en byte-slice, antingen från det inbäddade filsystemet eller från disk.
+// Om ett fel uppstår så panikslår funktionen.
+func MustGetFile(name string) []byte {
+	// Kontrollera om katalogen "static/" finns
+	if directoryExists("templates") {
+		// Försök läsa filen från disken
+		data, err := readFileFromDisk("templates", name)
+		if err != nil {
+			panic(fmt.Sprintf("fel vid läsning av fil från disk: %v", err))
+		}
+		return data
+	}
+
+	// Försök läsa filen från inbäddade Assets
+	data, err := readFileFromAssets(name)
+	if err != nil {
+		panic(fmt.Sprintf("fel vid läsning av fil från inbäddade assets: %v", err))
+	}
+	return data
+}
+
 // GetFile hämtar innehållet i en fil som en byte-slice, antingen från det inbäddade filsystemet eller från disk.
 func GetFile(name string) ([]byte, error) {
 	// Kontrollera om katalogen "static/" finns
-	if directoryExists("static") {
+	if directoryExists("templates") {
 		// Läs filen från disken
 		return readFileFromDisk("static", name)
 	}
@@ -65,8 +86,8 @@ func readFileFromAssets(name string) ([]byte, error) {
 
 // GetFS returnerar antingen det inbäddade filsystemet eller ett filsystem som pekar på "static/" katalogen.
 func GetFS() fs.FS {
-	if directoryExists("static") {
-		return os.DirFS("static")
+	if directoryExists("templates") {
+		return os.DirFS("templates")
 	}
 
 	return Assets
